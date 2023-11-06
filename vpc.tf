@@ -37,7 +37,7 @@ resource "aws_route_table" "public-route-table" {
   vpc_id = aws_vpc.VPC-akhil.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block = var.routtable_cidr
     gateway_id = aws_internet_gateway.gw.id
   }
   tags = {
@@ -66,7 +66,7 @@ resource "aws_route_table" "private-route-table" {
   vpc_id = aws_vpc.VPC-akhil.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block = var.routtable_cidr
     gateway_id = aws_nat_gateway.NAT.id
   }
   tags = {
@@ -77,6 +77,42 @@ resource "aws_route_table" "private-route-table" {
 resource "aws_route_table_association" "ARN" {
   subnet_id      = aws_subnet.Private.id
   route_table_id = aws_route_table.private-route-table.id
+}
+
+resource "aws_security_group" "web_sg" {
+  name   = "HTTP and SSH"
+  vpc_id = aws_vpc.VPC-akhil.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "tls_private_key" "rsa-4096" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "pem" {
+  key_name   = var.key_name
+  public_key = "tls_private_key.rsa-4096.public_key_openssh"
 }
 
 

@@ -9,3 +9,12 @@ variable "public_Subnet"{
 variable "private_Subnet"{
   type        = string   
 }
+
+variable "routtable_cidr" {
+  type =  string
+  
+}
+
+variable "key_name" {
+  type = string
+}
