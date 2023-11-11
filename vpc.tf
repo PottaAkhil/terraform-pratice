@@ -9,18 +9,38 @@ resource "aws_vpc" "VPC-akhil" {
 
 resource "aws_subnet" "public" {
   vpc_id     = aws_vpc.VPC-akhil.id
-  count = length(var.availability_zones)
-  cidr_block = var.public_Subnet
+  count = length(var.public_Subnet)
+  cidr_block = var.public_Subnet[count.index]
+  availability_zone = var.availability_zones[count.index]
 
   tags = {
     Name = "public-subnet"
   }
 }
+##############################################################################
+resource "aws_route_table" "public-route-table" {
+  vpc_id = aws_vpc.VPC-akhil.id
 
-resource "aws_subnet" "Private" {
+  route {
+    cidr_block = var.routtable_cidr
+    gateway_id = aws_internet_gateway.gw.id
+  }
+  tags = {
+    Name = "public"
+  }
+}
+resource "aws_route_table_association" "ARI" {
+  count          = length(var.public_Subnet)
+  subnet_id      = aws_subnet.public[count.index].id
+  route_table_id = aws_route_table.public-route-table.id
+}
+
+##################################################################################################
+resource "aws_subnet" "private" {
   vpc_id     = aws_vpc.VPC-akhil.id
-  count = length(var.availability_zones)
-  cidr_block = var.private_Subnet
+  count = length(var.private_Subnet)
+  cidr_block = var.private_Subnet[count.index]
+  availability_zone = var.availability_zones[count.index]
 
   tags = {
     Name = "private-subnet"
@@ -34,30 +54,13 @@ resource "aws_internet_gateway" "gw" {
     Name = "aws_internet_gateway"
   }
 }
-
-resource "aws_route_table" "public-route-table" {
-  vpc_id = aws_vpc.VPC-akhil.id
-
-  route {
-    cidr_block = var.routtable_cidr
-    gateway_id = aws_internet_gateway.gw.id
-  }
-  tags = {
-    Name = "public"
-  }
-}
-
-resource "aws_route_table_association" "ARI" {
-  subnet_id      = aws_subnet.public.id
-  route_table_id = aws_route_table.public-route-table.id
-}
-
+#############################################
 resource "aws_eip" "EIP" {
  
 }
 resource "aws_nat_gateway" "NAT" {
   allocation_id = aws_eip.EIP.id
-  subnet_id     = aws_subnet.public.id
+  subnet_id     = aws_subnet.public[1].id
 
   tags = {
     Name = "gw NAT"
@@ -77,7 +80,8 @@ resource "aws_route_table" "private-route-table" {
 }
 
 resource "aws_route_table_association" "ARN" {
-  subnet_id      = aws_subnet.Private.id
+  count          = length(var.private_Subnet)
+  subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private-route-table.id
 }
 

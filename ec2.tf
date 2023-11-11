@@ -1,8 +1,9 @@
 resource "aws_instance" "web" {
-  ami           = "ami-067d1e60475437da2"
+  ami           = "ami-02e94b011299ef128"
   instance_type = "t2.micro"
+  count =var.number
   key_name      = aws_key_pair.kyc_app_public_key.key_name
-  subnet_id        = aws_subnet.public.id
+  subnet_id     = aws_subnet.public[count.index].id
   vpc_security_group_ids = [aws_security_group.web_sg.id]
   associate_public_ip_address = true
   ebs_block_device {

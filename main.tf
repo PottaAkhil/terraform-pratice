@@ -6,15 +6,15 @@ terraform {
     }
   }  
   backend "s3" {
-    bucket = "ter-tfstatebucket"
-    key    = "ter-tfstatebucket/statefile"
-    dynamodb_table = "state"
-    region = "us-east-1"
+    bucket = "akhil-matson"
+    key    = "statefile"
+    dynamodb_table = "Dynamo"
+    region = "ap-south-1"
     encrypt        = true
   }
 }
 
 provider "aws" {
-  region = "us-east-1"
+  region = "ap-south-1"
 }
 

@@ -3,11 +3,11 @@ variable "cidr"{
 }
 
 variable "public_Subnet"{
-  type        = string
+  type        = list(string)
 }
 
 variable "private_Subnet"{
-  type        = string   
+  type        = list(string)   
 }
 
 variable "routtable_cidr" {
@@ -22,3 +22,8 @@ variable "key_name" {
 variable "availability_zones" {
   type = list(string)
 }
+
+variable "number" {
+  type = number
+}
+
