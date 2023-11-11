@@ -9,6 +9,7 @@ resource "aws_vpc" "VPC-akhil" {
 
 resource "aws_subnet" "public" {
   vpc_id     = aws_vpc.VPC-akhil.id
+  count = length(var.availability_zones)
   cidr_block = var.public_Subnet
 
   tags = {
@@ -18,6 +19,7 @@ resource "aws_subnet" "public" {
 
 resource "aws_subnet" "Private" {
   vpc_id     = aws_vpc.VPC-akhil.id
+  count = length(var.availability_zones)
   cidr_block = var.private_Subnet
 
   tags = {
@@ -110,9 +112,13 @@ resource "tls_private_key" "rsa-4096" {
   rsa_bits  = 4096
 }
 
-resource "aws_key_pair" "pem" {
+resource "aws_key_pair" "kyc_app_public_key" {
   key_name   = var.key_name
-  public_key = "tls_private_key.rsa-4096.public_key_openssh"
+  public_key = tls_private_key.rsa-4096.public_key_openssh
 }
 
+resource "local_file" "ssh_key" {
+  filename = "${aws_key_pair.kyc_app_public_key.key_name}.pem"
+  content = tls_private_key.rsa-4096.private_key_pem
+}
 

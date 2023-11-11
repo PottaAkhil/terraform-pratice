@@ -18,3 +18,7 @@ variable "routtable_cidr" {
 variable "key_name" {
   type = string
 }
+
+variable "availability_zones" {
+  type = list(string)
+}
