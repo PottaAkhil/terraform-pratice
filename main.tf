@@ -15,6 +15,8 @@ terraform {
 }
 
 provider "aws" {
-  region = "ap-south-1"
-}
+  shared_credentials_files = ["C:/Users/Akhil/.aws/credentials"]
 
+  # Use the "Matson" named profile from the AWS CLI credentials file
+  profile                 = "Matson"
+}

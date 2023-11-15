@@ -27,3 +27,10 @@ variable "number" {
   type = number
 }
 
+variable "rules" {
+  type = list(object({
+    port = number
+    proto = string
+    cidr_blocks = list(string)
+  }))
+  }

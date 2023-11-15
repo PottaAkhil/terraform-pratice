@@ -6,7 +6,7 @@ resource "aws_vpc" "VPC-akhil" {
     Name = "VPC"
   }
 }
-
+##############################################################################
 resource "aws_subnet" "public" {
   vpc_id     = aws_vpc.VPC-akhil.id
   count = length(var.public_Subnet)
@@ -14,36 +14,7 @@ resource "aws_subnet" "public" {
   availability_zone = var.availability_zones[count.index]
 
   tags = {
-    Name = "public-subnet"
-  }
-}
-##############################################################################
-resource "aws_route_table" "public-route-table" {
-  vpc_id = aws_vpc.VPC-akhil.id
-
-  route {
-    cidr_block = var.routtable_cidr
-    gateway_id = aws_internet_gateway.gw.id
-  }
-  tags = {
-    Name = "public"
-  }
-}
-resource "aws_route_table_association" "ARI" {
-  count          = length(var.public_Subnet)
-  subnet_id      = aws_subnet.public[count.index].id
-  route_table_id = aws_route_table.public-route-table.id
-}
-
-##################################################################################################
-resource "aws_subnet" "private" {
-  vpc_id     = aws_vpc.VPC-akhil.id
-  count = length(var.private_Subnet)
-  cidr_block = var.private_Subnet[count.index]
-  availability_zone = var.availability_zones[count.index]
-
-  tags = {
-    Name = "private-subnet"
+    Name = "public-subnet${count.index +1}"
   }
 }
 
@@ -54,7 +25,25 @@ resource "aws_internet_gateway" "gw" {
     Name = "aws_internet_gateway"
   }
 }
-#############################################
+
+resource "aws_route_table" "public-route-table" {
+  count = 3
+  vpc_id = aws_vpc.VPC-akhil.id
+
+  route {
+    cidr_block = var.routtable_cidr
+    gateway_id = aws_internet_gateway.gw.id
+  }
+  tags = {
+    Name = "public${count.index + 1}"
+  }
+}
+resource "aws_route_table_association" "ARI" {
+  count          = length(var.public_Subnet)
+  subnet_id      = aws_subnet.public[count.index].id
+  route_table_id = aws_route_table.public-route-table[count.index % 3].id
+}
+##################################################################################################
 resource "aws_eip" "EIP" {
  
 }
@@ -67,7 +56,21 @@ resource "aws_nat_gateway" "NAT" {
   }
 }
 
+
+resource "aws_subnet" "private" {
+  vpc_id     = aws_vpc.VPC-akhil.id
+  count = length(var.private_Subnet)
+  cidr_block = var.private_Subnet[count.index]
+  availability_zone = var.availability_zones[count.index]
+
+  tags = {
+    Name = "private-subnet${count.index +1}"
+  }
+}
+
+
 resource "aws_route_table" "private-route-table" {
+  count = 3
   vpc_id = aws_vpc.VPC-akhil.id
 
   route {
@@ -75,32 +78,28 @@ resource "aws_route_table" "private-route-table" {
     gateway_id = aws_nat_gateway.NAT.id
   }
   tags = {
-    Name = "private"
+    Name = "private${count.index +1}"
   }
 }
 
 resource "aws_route_table_association" "ARN" {
   count          = length(var.private_Subnet)
   subnet_id      = aws_subnet.private[count.index].id
-  route_table_id = aws_route_table.private-route-table.id
+  route_table_id = aws_route_table.private-route-table[count.index % 3].id
 }
 
+##############################################################################
 resource "aws_security_group" "web_sg" {
   name   = "HTTP and SSH"
   vpc_id = aws_vpc.VPC-akhil.id
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    dynamic "ingress" {
+    for_each = var.rules
+      content {
+      from_port   = ingress.value["port"]
+      to_port     = ingress.value["port"]
+      protocol    = ingress.value["proto"]
+      cidr_blocks = ingress.value["cidr_blocks"]
+    }
   }
 
   egress {
@@ -110,7 +109,7 @@ resource "aws_security_group" "web_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
-
+##############################################################################
 resource "tls_private_key" "rsa-4096" {
   algorithm = "RSA"
   rsa_bits  = 4096
