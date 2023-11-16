@@ -1,5 +1,14 @@
+data "aws_ami_ids" "ubuntu" {
+  owners = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/ubuntu-*-*-amd64-server-*"]
+  }
+}
+
 resource "aws_instance" "web" {
-  ami           = "ami-02e94b011299ef128"
+  ami           = data.aws_ami_ids.ubuntu.id
   instance_type = "t2.micro"
   count =var.number
   key_name      = aws_key_pair.kyc_app_public_key.key_name
