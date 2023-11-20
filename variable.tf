@@ -34,3 +34,15 @@ variable "rules" {
     cidr_blocks = list(string)
   }))
   }
+variable "eks_cluster_name" {
+  type = string
+}
+
+variable "resource_tags" {
+  type = map(string)
+}
+
+variable "region" {
+  type = string
+  
+}
