@@ -1,10 +1,10 @@
-cidr = "10.10.0.0/16"
-public_Subnet = ["10.10.1.0/24", "10.10.2.0/24", "10.10.3.0/24","10.10.7.0/24", "10.10.8.0/24", "10.10.9.0/24"]
-private_Subnet = ["10.10.4.0/24", "10.10.5.0/24", "10.10.6.0/24"]
+cidr = "192.168.0.0/16"
+public_Subnet = ["192.168.1.0/24", "192.168.2.0/24", "192.168.3.0/24","192.168.7.0/24", "192.168.8.0/24", "192.168.9.0/24"]
+private_Subnet = ["192.168.4.0/24", "192.168.5.0/24", "192.168.6.0/24"]
 routtable_cidr = "0.0.0.0/0"
 key_name = "terraformnew"
 number = "1"
-availability_zones = ["ap-south-1a", "ap-south-1b", "ap-south-1c","ap-south-1a", "ap-south-1b", "ap-south-1c"]
+availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c","us-east-1a", "us-east-1a", "us-east-1b"]
 rules =  [
     {
       port        = 80
@@ -30,4 +30,7 @@ resource_tags =  {
     "Iaac"       = "Terraform"
   }
 
-region = "ap-south-1"
+region = "us-east-1"
+
+# 
+

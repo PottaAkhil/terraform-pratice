@@ -28,7 +28,7 @@ resource "aws_instance" "web" {
 }
 
 resource "aws_iam_instance_profile" "profile" {
-  name = "Akhil-test"
+  name = "new-test"
   role = aws_iam_role.session-role.name
 }
 
@@ -50,12 +50,50 @@ resource "aws_iam_policy" "eks_policy" {
         {
           "Effect": "Allow",
           "Action": "eks:*",
-          "Resource": "arn:aws:eks:ap-south-1:926601094987:cluster/test-cluster"
+          "Resource": "arn:aws:eks:us-east-1:926601094987:cluster/test-cluster"
         }
       ]
     }
   JSON
 }
+
+resource "aws_iam_policy" "cluster-access" {
+  name        = "cluster-access-policy"
+  description = "IAM policy for cluster access"
+
+  policy = <<-JSON
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Sid": "VisualEditor0",
+          "Effect": "Allow",
+          "Action": "ec2:*",
+          "Resource": "*"
+        },
+        {
+          "Effect": "Allow",
+          "Action": [
+            "eks:*"
+          ],
+          "Resource": "*"
+        },
+        {
+          "Effect": "Allow",
+          "Action": "iam:PassRole",
+          "Resource": "*",
+          "Condition": {
+            "StringEquals": {
+              "iam:PassedToService": "eks.amazonaws.com"
+            }
+          }
+        }
+      ]
+    }
+  JSON
+}
+
+
 
 resource "aws_iam_role" "session-role" {
   name               = "test_role"
@@ -81,6 +119,11 @@ resource "aws_iam_role_policy_attachment" "AmazonSSMManagedInstanceCore" {
 }
 
 resource "aws_iam_role_policy_attachment" "eks_policy" {
-  policy_arn = aws_iam_policy.auto-policy.arn
+  policy_arn = aws_iam_policy.eks_policy.arn
+  role       = aws_iam_role.session-role.name
+}
+
+resource "aws_iam_role_policy_attachment" "cluster-access" {
+  policy_arn = aws_iam_policy.cluster-access.arn
   role       = aws_iam_role.session-role.name
 }

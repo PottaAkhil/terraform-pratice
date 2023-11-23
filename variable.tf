@@ -46,3 +46,10 @@ variable "region" {
   type = string
   
 }
+
+# variable "addons" {
+#   type = list(object({
+#     name    = string
+#     version = string
+#   }))
+#   }

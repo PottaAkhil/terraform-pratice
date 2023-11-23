@@ -20,6 +20,13 @@ resource "aws_eks_node_group" "node" {
   update_config {
     max_unavailable = 1
   }
+  tags_all = {
+    "k8s.io/cluster-autoscaler/${var.eks_cluster_name}" = "owned"
+    "k8s.io/cluster-autoscaler/enabled" = "true"
+  }
+    lifecycle {
+    create_before_destroy = true
+  }
 
   # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
   # Otherwise, EKS will not be able to properly delete EC2 Instances and Elastic Network Interfaces.
@@ -30,3 +37,4 @@ resource "aws_eks_node_group" "node" {
     aws_iam_role_policy_attachment.EC2InstanceProfileForImageBuilderECRContainerBuilds,
   ]
 }
+

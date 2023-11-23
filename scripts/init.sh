@@ -7,6 +7,6 @@ sudo apt install unzip
 sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 sudo unzip awscliv2.zip
 sudo ./aws/install
-aws update kube-config --region ap-south-1 --name test-cluster
-
-
+aws eks update-kubeconfig --name test-cluster --region us-east-1
+kubectl apply -f ./manifest/cluster-autoscaler.yml
+kubectl get pods -A

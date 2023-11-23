@@ -11,6 +11,7 @@ resource "aws_eks_cluster" "cluster" {
     endpoint_private_access = "true"
     endpoint_public_access = "false"
   }
+
   tags                          =  merge(tomap({
     "kubernetes.io/cluster/${var.eks_cluster_name}" = "owned"
     
@@ -26,8 +27,36 @@ resource "aws_eks_cluster" "cluster" {
 
 }
 
+resource "aws_eks_addon" "kube" {
+  cluster_name = aws_eks_cluster.cluster.name
+  addon_name   = "kube-proxy"
+  # addon_version = "v1.28.2-eksbuild.2"
 
-resource "aws_security_group" "additional_sg" {
+}
+
+resource "aws_eks_addon" "vpc-cni" {
+  cluster_name = aws_eks_cluster.cluster.name
+  addon_name   = "vpc-cni"
+  # addon_version = "v1.15.4-eksbuild.1"
+
+   
+}
+
+resource "aws_eks_addon" "credns" {
+  cluster_name = aws_eks_cluster.cluster.name
+  addon_name   = "coredns"
+  # addon_version = "v1.10.1-eksbuild.6"
+   
+}
+
+resource "aws_eks_addon" "ebs" {
+  cluster_name = aws_eks_cluster.cluster.name
+  addon_name   = "aws-ebs-csi-driver"
+  # addon_version = "v1.25.0-eksbuild.1"
+
+   
+}
+resource "aws_security_group" "additional_sg" { 
   name        = "allow_tls"
   description = "Allow eks inbound traffic"
   vpc_id      = aws_vpc.VPC-akhil.id
