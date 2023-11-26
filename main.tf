@@ -14,7 +14,7 @@ terraform {
   }
    
   backend "s3" {
-    bucket = "terraform-akhil-new"
+    bucket = "akhil-matsons"
     key    = "new/statefile"
     # dynamodb_table = "Dynamo"
     region = "us-east-1"
@@ -24,7 +24,9 @@ terraform {
 }
 
 provider "aws" {
-  shared_credentials_files = ["C:/Users/Akhil/.aws/credentials"]
+  shared_credentials_files = ["C:/Users/91831/.aws/credentials"]
   profile                 = "default"
 }
+
+
 
