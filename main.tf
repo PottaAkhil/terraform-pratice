@@ -14,10 +14,10 @@ terraform {
   }
    
   backend "s3" {
-    bucket = "akhil-matsons"
+    bucket = "dev-cluster-iac"
     key    = "new/statefile"
     # dynamodb_table = "Dynamo"
-    region = "us-east-1"
+    region = "me-central-1"
     encrypt        = true
     profile = "default"
   }
