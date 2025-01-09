@@ -23,9 +23,14 @@ terraform {
   }
 }
 
+#provider "aws" {
+#  shared_credentials_files = ["C:/Users/91831/.aws/credentials"]
+ # profile                 = "default"
+#}
 provider "aws" {
-  shared_credentials_files = ["C:/Users/91831/.aws/credentials"]
-  profile                 = "default"
+  shared_credentials_files = ["/root/.aws/credentials"] # Update for Amazon Linux
+  profile                  = "default"                 # Use the default profile
+  region                   = "me-central-1"            # Specify the AWS region
 }
 
 
