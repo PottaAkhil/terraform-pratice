@@ -1,10 +1,10 @@
 cidr = "192.168.0.0/16"
-public_Subnet = ["192.168.1.0/24", "192.168.2.0/24", "192.168.3.0/24","192.168.7.0/24", "192.168.8.0/24", "192.168.9.0/24"]
+public_Subnet = ["192.168.1.0/24", "192.168.2.0/24", "192.168.3.0/24"]
 private_Subnet = ["192.168.4.0/24", "192.168.5.0/24", "192.168.6.0/24"]
 routtable_cidr = "0.0.0.0/0"
-key_name = "terraformnew"
+key_name = "cluster-key"
 number = "1"
-availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c","us-east-1a", "us-east-1a", "us-east-1b"]
+availability_zones = ["me-central-1a", "me-central-1b", "me-central-1c"]
 rules =  [
     {
       port        = 80
@@ -26,11 +26,11 @@ rules =  [
 eks_cluster_name = "test-cluster"
 resource_tags =  { 
     "env"        = "dev"
-    "project"    = "Akhil"
+    "project"    = "poc"
     "Iaac"       = "Terraform"
   }
 
-region = "us-east-1"
+region = "me-central-1"
 
 # 
 
